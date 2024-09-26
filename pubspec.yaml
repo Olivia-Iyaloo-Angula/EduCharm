@@ -1,0 +1,251 @@
+name: educharm
+description: "A new Flutter project."
+# The following line prevents the package from being accidentally published to
+# pub.dev using `flutter pub publish`. This is preferred for private packages.
+publish_to: 'none' # Remove this line if you wish to publish to pub.dev
+
+# The following defines the version and build number for your application.
+# A version number is three numbers separated by dots, like 1.2.43
+# followed by an optional build number separated by a +.
+# Both the version and the builder number may be overridden in flutter
+# build by specifying --build-name and --build-number, respectively.
+# In Android, build-name is used as versionName while build-number used as versionCode.
+# Read more about Android versioning at https://developer.android.com/studio/publish/versioning
+# In iOS, build-name is used as CFBundleShortVersionString while build-number is used as CFBundleVersion.
+# Read more about iOS versioning at
+# https://developer.apple.com/library/archive/documentation/General/Reference/InfoPlistKeyReference/Articles/CoreFoundationKeys.html
+# In Windows, build-name is used as the major, minor, and patch parts
+# of the product and file versions while build-number is used as the build suffix.
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.4.3 <4.0.0'
+
+# Dependencies specify other packages that your package needs in order to work.
+# To automatically upgrade your package dependencies to the latest versions
+# consider running `flutter pub upgrade --major-versions`. Alternatively,
+# dependencies can be manually updated by changing the version numbers below to
+# the latest version available on pub.dev. To see which dependencies have newer
+# versions available, run `flutter pub outdated`.
+dependencies:
+  flutter:
+    sdk: flutter
+
+  # The following adds the Cupertino Icons font to your application.
+  # Use with the CupertinoIcons class for iOS style icons.
+  cupertino_icons: ^1.0.6
+  provider: ^6.1.2
+  audioplayers: ^4.0.1
+  confetti: ^0.7.0 
+  flutter_tts: ^3.0.0
+  animated_background: ^2.0.0
+  ar_flutter_plugin: ^0.7.3
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  
+
+  # The "flutter_lints" package below contains a set of recommended lints to
+  # encourage good coding practices. The lint set provided by the package is
+  # activated in the `analysis_options.yaml` file located at the root of your
+  # package. See that file for information about deactivating specific lint
+  # rules and activating additional ones.
+  flutter_lints: ^3.0.0
+
+# For information on the generic Dart part of this file, see the
+# following page: https://dart.dev/tools/pub/pubspec
+
+# The following section is specific to Flutter packages.
+flutter:
+
+  # The following line ensures that the Material Icons font is
+  # included with your application, so that you can use the icons in
+  # the material Icons class.
+  uses-material-design: true
+
+  # To add assets to your application, add an assets section, like this:
+  assets:
+  - assets/WelcomeScreen.png
+  - assets/AlphabetSound.jpg
+  - assets/vowels.jpg
+  - assets/WordFamilies.jpg
+  - assets/Digraphs.jpg
+  - assets/audio/Vowel_Song.mp3
+  - assets/A.jpg
+  - assets/B.jpg
+  - assets/C.jpg
+  - assets/D.jpg
+  - assets/E.jpg
+  - assets/F.jpg
+  - assets/G.jpg
+  - assets/H.jpg
+  - assets/I.jpg
+  - assets/J.jpg
+  - assets/K.jpg
+  - assets/L.jpg
+  - assets/M.jpg
+  - assets/N.png
+  - assets/O.png
+  - assets/P.jpg
+  - assets/Q.jpg
+  - assets/R.png
+  - assets/S.jpg
+  - assets/T.jpg
+  - assets/U.jpg
+  - assets/V.jpg 
+  - assets/W.jpg
+  - assets/X.jpg
+  - assets/Y.jpg
+  - assets/Z.jpg
+  - assets/gifs/A.gif
+  - assets/gifs/B.gif
+  - assets/gifs/C.gif
+  - assets/gifs/D.gif
+  - assets/gifs/E.gif
+  - assets/gifs/F.gif
+  - assets/gifs/G.gif
+  - assets/gifs/H.gif
+  - assets/gifs/I.gif
+  - assets/gifs/J.gif
+  - assets/gifs/K.gif
+  - assets/gifs/L.gif
+  - assets/gifs/M.gif
+  - assets/gifs/N.gif
+  - assets/gifs/O.gif
+  - assets/gifs/P.gif
+  - assets/gifs/Q.gif
+  - assets/gifs/R.gif
+  - assets/gifs/S.gif
+  - assets/gifs/T.gif
+  - assets/gifs/U.gif
+  - assets/gifs/V.gif
+  - assets/gifs/W.gif
+  - assets/gifs/X.gif
+  - assets/gifs/Y.gif
+  - assets/gifs/Z.gif
+  - assets/vowels/A.jpg
+  - assets/vowels/E.jpg
+  - assets/vowels/I.jpg
+  - assets/vowels/O.jpg
+  - assets/vowels/U.jpg 
+  - assets/letter tracing.webp
+  - assets/710e743npjL.png
+  - assets/IMG_3202.jpg
+  - assets/free-printable-flashcards-with-pictures.jpg
+  - assets/ABC Words.png
+  - assets/audio/Correct_1.mp3
+  - assets/audio/Correct_2.mp3
+  - assets/images/fox.png
+  - assets/images/lion.png
+  - assets/images/Bee.png
+  - assets/images/cat.png
+  - assets/images/Zebra.png
+  - assets/images/Bag.png
+  - assets/images/Gift.png
+  - assets/images/Apple.png
+  - assets/images/pig.png
+  - assets/images/Cow.png
+  - assets/images/Ball.png
+  - assets/images/Truck.png
+  - assets/images/Eggs.png
+  - assets/images/Kite.png
+  - assets/images/Juice.png
+  - assets/images/Tree.png
+  - assets/images/Dress.png
+  - assets/images/Hand.png
+  - assets/images/Candy.png
+  - assets/images/Corn.png
+  - assets/images/Bird.png
+  - assets/images/Milk.png
+  - assets/images/CloudsWallpaper.jpg
+  - assets/images/cute-polar-bear.jpg
+  - assets/audio/A.wav
+  - assets/audio/B.wav
+  - assets/audio/C.wav
+  - assets/audio/D.wav
+  - assets/audio/E.wav
+  - assets/audio/F.wav
+  - assets/audio/G.wav
+  - assets/audio/H.wav
+  - assets/audio/I.wav
+  - assets/audio/J.wav
+  - assets/audio/K.wav
+  - assets/audio/L.wav
+  - assets/audio/M.wav
+  - assets/audio/N.wav
+  - assets/audio/O.wav
+  - assets/audio/P.wav
+  - assets/audio/Q.wav
+  - assets/audio/R.wav
+  - assets/audio/S.wav
+  - assets/audio/T.wav
+  - assets/audio/U.wav
+  - assets/audio/V.wav
+  - assets/audio/W.wav
+  - assets/audio/X.wav
+  - assets/audio/Y.wav
+  - assets/audio/Z.wav
+  - assets/images/Book.jpeg
+  - assets/images/Tin.jpeg
+  - assets/images/Duck.jpeg
+  - assets/images/Table.jpeg
+  - assets/images/Chair.jpeg
+  - assets/audio/A.mp3
+  - assets/audio/B.mp3
+  - assets/audio/C.mp3
+  - assets/audio/D.mp3
+  - assets/audio/E.mp3
+  - assets/audio/F.mp3
+  - assets/audio/G.mp3
+  - assets/audio/H.mp3
+  - assets/audio/I.mp3
+  - assets/audio/J.mp3
+  - assets/audio/K.mp3
+  - assets/audio/L.mp3
+  - assets/audio/M.mp3
+  - assets/audio/N.mp3
+  - assets/audio/O.mp3
+  - assets/audio/P.mp3
+  - assets/audio/Q.mp3
+  - assets/audio/R.mp3
+  - assets/audio/S.mp3
+  - assets/audio/T.mp3
+  - assets/audio/U.mp3
+  - assets/audio/V.mp3
+  - assets/audio/W.mp3
+  - assets/audio/X.mp3
+  - assets/audio/Y.mp3
+  - assets/audio/Z.mp3
+  - assets/audio/Well_done.mp3
+  - assets/audio/listen_for_ee_in_this.mp3
+  - assets/audio/Tree.mp3
+  - assets/audio/Ball.mp3
+  - assets/audio/Eggs.mp3
+  - assets/audio/Read_the_words_and_tap.mp3
+  - assets/audio/wrong.mp3
+
+
+
+  
+  
+
+  # An image asset can refer to one or more resolution-specific "variants", see
+  # https://flutter.dev/assets-and-images/#resolution-aware
+
+  # For details regarding adding assets from package dependencies, see
+  # https://flutter.dev/assets-and-images/#from-packages
+
+  # To add custom fonts to your application, add a fonts section here,
+  # in this "flutter" section. Each entry in this list should have a
+  # "family" key with the font family name, and a "fonts" key with a
+  # list giving the asset and other descriptors for the font. For
+  # example:
+  fonts:
+    - family: PartyConfetti
+      fonts:
+        - asset: assets/fonts/PartyConfetti.ttf
+        
+  #
+  # For details regarding fonts from package dependencies,
+  # see https://flutter.dev/custom-fonts/#from-packages
