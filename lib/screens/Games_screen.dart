@@ -55,7 +55,7 @@ class GamesScreen extends StatelessWidget {
                       context,
                       'Word Tracing',
                       'assets/letter tracing.webp',
-                      tracing.LetterARViewScreen()),
+                      tracing.LetterTracingScreen()),
                   _buildGameButton(
                       context,
                       'Tap the Sound',

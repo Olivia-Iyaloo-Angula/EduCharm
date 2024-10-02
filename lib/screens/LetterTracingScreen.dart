@@ -1,163 +1,268 @@
-import 'package:ar_flutter_plugin/managers/ar_location_manager.dart';
-import 'package:ar_flutter_plugin/managers/ar_session_manager.dart';
-import 'package:ar_flutter_plugin/managers/ar_object_manager.dart';
-import 'package:ar_flutter_plugin/managers/ar_anchor_manager.dart';
-import 'package:ar_flutter_plugin/models/ar_anchor.dart';
-import 'package:flutter/material.dart';
-import 'package:ar_flutter_plugin/ar_flutter_plugin.dart';
-import 'package:ar_flutter_plugin/datatypes/config_planedetection.dart';
-import 'package:ar_flutter_plugin/datatypes/node_types.dart';
-import 'package:ar_flutter_plugin/datatypes/hittest_result_types.dart';
-import 'package:ar_flutter_plugin/models/ar_node.dart';
-import 'package:ar_flutter_plugin/models/ar_hittest_result.dart';
-import 'package:flutter/services.dart';
-import 'package:vector_math/vector_math_64.dart';
 import 'dart:math';
+import 'dart:ui';
+import 'package:flutter/material.dart';
 
-class LetterARViewScreen extends StatefulWidget {
-  LetterARViewScreen({Key? key}) : super(key: key);
-
-  @override
-  _LetterARViewScreenState createState() => _LetterARViewScreenState();
+void main() {
+  runApp(MaterialApp(
+    home: LetterTracingScreen(),
+    debugShowCheckedModeBanner: false,
+  ));
 }
 
-class _LetterARViewScreenState extends State<LetterARViewScreen> {
-  ARSessionManager? arSessionManager;
-  ARObjectManager? arObjectManager;
-  ARAnchorManager? arAnchorManager;
+class LetterTracingScreen extends StatefulWidget {
+  @override
+  _LetterTracingScreenState createState() => _LetterTracingScreenState();
+}
 
-  List<ARNode> nodes = [];
-  List<ARAnchor> anchors = [];
+class _LetterTracingScreenState extends State<LetterTracingScreen>
+    with SingleTickerProviderStateMixin {
+  String _currentLetter = 'E'; // Set to 'E' for example
+  int _correctTraces = 0;
+  late AnimationController _controller;
+  late Animation<double> _animation;
+  bool _isTracingAllowed = false; // Flag to control when tracing is allowed
+  List<Offset> _userPoints = []; // Store user tracing points
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = AnimationController(
+      duration: const Duration(seconds: 3),
+      vsync: this,
+    )..addListener(() {
+        setState(() {});
+      });
+    _animation = CurvedAnimation(parent: _controller, curve: Curves.easeInOut);
+    _controller.forward().then((_) {
+      setState(() {
+        _isTracingAllowed = true; // Allow tracing after the demo completes
+      });
+    });
+  }
 
   @override
   void dispose() {
+    _controller.dispose();
     super.dispose();
-    arSessionManager!.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        appBar: AppBar(
-          title: const Text('Learn Letters with AR'),
-        ),
-        body: Container(
-            child: Stack(children: [
-          ARView(
-            onARViewCreated: onARViewCreated,
-            planeDetectionConfig: PlaneDetectionConfig.horizontalAndVertical,
+      appBar: AppBar(
+        title: Text('Trace the Letter'),
+        backgroundColor: Colors.blue,
+      ),
+      body: Container(
+        color: Colors.blue[100], // Background color similar to screenshot
+        child: Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Container(
+                width: 300,
+                height: 400,
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(color: Colors.blue, width: 5),
+                ),
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    DashedLetterPath(
+                      letter: _currentLetter,
+                      animation: _animation,
+                    ),
+                    if (!_isTracingAllowed)
+                      AnimatedFingerIcon(animation: _animation),
+                    if (_isTracingAllowed)
+                      LetterTracingWidget(
+                        letter: _currentLetter,
+                        onTraceComplete: _onTraceComplete,
+                        userPoints: _userPoints,
+                      ),
+                  ],
+                ),
+              ),
+            ],
           ),
-          Align(
-            alignment: FractionalOffset.bottomCenter,
-            child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-                children: [
-                  ElevatedButton(
-                      onPressed: onRemoveEverything,
-                      child: Text("Remove Letters")),
-                ]),
-          )
-        ])));
+        ),
+      ),
+    );
   }
 
-  void onARViewCreated(
-      ARSessionManager arSessionManager,
-      ARObjectManager arObjectManager,
-      ARAnchorManager arAnchorManager,
-      ARLocationManager arLocationManager) {
-    this.arSessionManager = arSessionManager;
-    this.arObjectManager = arObjectManager;
-    this.arAnchorManager = arAnchorManager;
-
-    this.arSessionManager!.onInitialize(
-          showFeaturePoints: false,
-          showPlanes: true,
-          customPlaneTexturePath:
-              "Images/triangle.png", // Optional custom plane texture
-          showWorldOrigin: true,
-          handlePans: true,
-          handleRotation: true,
-        );
-    this.arObjectManager!.onInitialize();
-
-    this.arSessionManager!.onPlaneOrPointTap = onPlaneOrPointTapped;
-    this.arObjectManager!.onPanStart = onPanStarted;
-    this.arObjectManager!.onPanChange = onPanChanged;
-    this.arObjectManager!.onPanEnd = onPanEnded;
-    this.arObjectManager!.onRotationStart = onRotationStarted;
-    this.arObjectManager!.onRotationChange = onRotationChanged;
-    this.arObjectManager!.onRotationEnd = onRotationEnded;
-  }
-
-  Future<void> onRemoveEverything() async {
-    anchors.forEach((anchor) {
-      this.arAnchorManager!.removeAnchor(anchor);
+  void _onTraceComplete() {
+    setState(() {
+      _correctTraces++;
+      _isTracingAllowed = false; // Disable further tracing after completion
+      _controller.reset();
+      _controller.forward().then((_) {
+        _userPoints.clear(); // Clear the user tracing points
+        setState(() {
+          _isTracingAllowed = true;
+        });
+      });
     });
-    anchors = [];
   }
+}
 
-  Future<void> onPlaneOrPointTapped(
-      List<ARHitTestResult> hitTestResults) async {
-    var singleHitTestResult = hitTestResults.firstWhere(
-        (hitTestResult) => hitTestResult.type == ARHitTestResultType.plane);
-    if (singleHitTestResult != null) {
-      var newAnchor =
-          ARPlaneAnchor(transformation: singleHitTestResult.worldTransform);
-      bool? didAddAnchor = await this.arAnchorManager!.addAnchor(newAnchor);
-      if (didAddAnchor!) {
-        this.anchors.add(newAnchor);
+class DashedLetterPath extends StatelessWidget {
+  final String letter;
+  final Animation<double> animation;
 
-        // Add a 3D Letter (e.g., "A") to anchor
-        var newNode = ARNode(
-            type: NodeType.webGLB,
-            uri:
-                "https://yourserver.com/letters/A.gltf", // Change the link to your letter model
-            scale: Vector3(0.2, 0.2, 0.2), // Adjust size for a letter
-            position: Vector3(0.0, 0.0, 0.0),
-            rotation: Vector4(1.0, 0.0, 0.0, 0.0));
-        bool? didAddNodeToAnchor = await this
-            .arObjectManager!
-            .addNode(newNode, planeAnchor: newAnchor);
-        if (didAddNodeToAnchor!) {
-          this.nodes.add(newNode);
-        } else {
-          this.arSessionManager!.onError("Adding Letter to Anchor failed");
-        }
-      } else {
-        this.arSessionManager!.onError("Adding Anchor failed");
+  DashedLetterPath({required this.letter, required this.animation});
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomPaint(
+      size: Size(300, 300),
+      painter: DashedLetterPainter(letter, animation),
+    );
+  }
+}
+
+class DashedLetterPainter extends CustomPainter {
+  final String letter;
+  final Animation<double> animation;
+
+  DashedLetterPainter(this.letter, this.animation);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    Paint paint = Paint()
+      ..color = Colors.grey
+      ..strokeWidth = 4.0
+      ..style = PaintingStyle.stroke;
+
+    TextPainter textPainter = TextPainter(
+      text: TextSpan(
+        text: letter,
+        style: TextStyle(fontSize: 250, color: Colors.transparent),
+      ),
+      textDirection: TextDirection.ltr,
+    );
+    textPainter.layout();
+    Path path = Path();
+    textPainter.paint(canvas, Offset.zero);
+    PathMetrics pathMetrics = path.computeMetrics();
+
+    for (var metric in pathMetrics) {
+      double length = metric.length * animation.value;
+      for (double i = 0; i < length; i += 10) {
+        canvas.drawLine(
+          metric.getTangentForOffset(i)!.position,
+          metric.getTangentForOffset(i + 5)!.position,
+          paint,
+        );
       }
     }
   }
 
-  onPanStarted(String nodeName) {
-    print("Started panning letter " + nodeName);
+  @override
+  bool shouldRepaint(DashedLetterPainter oldDelegate) {
+    return oldDelegate.letter != letter || oldDelegate.animation != animation;
+  }
+}
+
+class AnimatedFingerIcon extends StatelessWidget {
+  final Animation<double> animation;
+
+  AnimatedFingerIcon({required this.animation});
+
+  @override
+  Widget build(BuildContext context) {
+    return Positioned(
+      bottom: 30 + (300 * (1 - animation.value)), // Adjust position
+      child: Icon(
+        Icons.touch_app,
+        size: 50,
+        color: Colors.blue,
+      ),
+    );
+  }
+}
+
+class LetterTracingWidget extends StatefulWidget {
+  final String letter;
+  final VoidCallback onTraceComplete;
+  final List<Offset> userPoints;
+
+  LetterTracingWidget({
+    required this.letter,
+    required this.onTraceComplete,
+    required this.userPoints,
+  });
+
+  @override
+  _LetterTracingWidgetState createState() => _LetterTracingWidgetState();
+}
+
+class _LetterTracingWidgetState extends State<LetterTracingWidget> {
+  void _handlePanUpdate(DragUpdateDetails details) {
+    setState(() {
+      widget.userPoints.add(details.localPosition);
+    });
   }
 
-  onPanChanged(String nodeName) {
-    print("Continued panning letter " + nodeName);
+  void _handlePanEnd(DragEndDetails details) {
+    if (_isTraceCorrect()) {
+      widget.onTraceComplete();
+    }
+    setState(() {
+      widget.userPoints.clear(); // Clear points after tracing ends
+    });
   }
 
-  onPanEnded(String nodeName, Matrix4 newTransform) {
-    print("Ended panning letter " + nodeName);
-    final pannedNode =
-        this.nodes.firstWhere((element) => element.name == nodeName);
-    // Optionally save the new transformation for future reference
-    // pannedNode.transform = newTransform;
+  bool _isTraceCorrect() {
+    // Implement logic to check if the trace is correct
+    return true; // Allow all traces for now
   }
 
-  onRotationStarted(String nodeName) {
-    print("Started rotating letter " + nodeName);
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onPanUpdate: _handlePanUpdate,
+      onPanEnd: _handlePanEnd,
+      child: CustomPaint(
+        size: Size(300, 300),
+        painter: LetterPainter(widget.letter, widget.userPoints),
+      ),
+    );
+  }
+}
+
+class LetterPainter extends CustomPainter {
+  final String letter;
+  final List<Offset> points;
+
+  LetterPainter(this.letter, this.points);
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    Paint paint = Paint()
+      ..color = Colors.black
+      ..strokeCap = StrokeCap.round
+      ..strokeWidth = 5.0;
+
+    TextPainter textPainter = TextPainter(
+      text: TextSpan(
+        text: letter,
+        style: TextStyle(fontSize: 250, color: Colors.grey[300]),
+      ),
+      textDirection: TextDirection.ltr,
+    );
+    textPainter.layout();
+    textPainter.paint(canvas, Offset.zero);
+
+    // Draw user's tracing
+    for (int i = 0; i < points.length - 1; i++) {
+      canvas.drawLine(points[i], points[i + 1], paint);
+    }
   }
 
-  onRotationChanged(String nodeName) {
-    print("Continued rotating letter " + nodeName);
-  }
-
-  onRotationEnded(String nodeName, Matrix4 newTransform) {
-    print("Ended rotating letter " + nodeName);
-    final rotatedNode =
-        this.nodes.firstWhere((element) => element.name == nodeName);
-    // Optionally save the new transformation
-    // rotatedNode.transform = newTransform;
+  @override
+  bool shouldRepaint(LetterPainter oldDelegate) {
+    return oldDelegate.points != points || oldDelegate.letter != letter;
   }
 }

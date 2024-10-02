@@ -39,7 +39,9 @@ dependencies:
   confetti: ^0.7.0 
   flutter_tts: ^3.0.0
   animated_background: ^2.0.0
-  ar_flutter_plugin: ^0.7.3
+  video_player: ^2.9.1
+  
+  
 
 dev_dependencies:
   flutter_test:
@@ -224,6 +226,50 @@ flutter:
   - assets/audio/Eggs.mp3
   - assets/audio/Read_the_words_and_tap.mp3
   - assets/audio/wrong.mp3
+  - assets/audio/A_sound.mp3
+  - assets/audio/B_sound.mp3
+  - assets/audio/D_sound.mp3
+  - assets/audio/E_sound.mp3
+  - assets/audio/F_sound.mp3
+  - assets/audio/G_sound.mp3
+  - assets/audio/H_sound.mp3
+  - assets/audio/I_sound.mp3
+  - assets/audio/J_sound.mp3
+  - assets/audio/L_sound.mp3
+  - assets/audio/M_sound.mp3
+  - assets/audio/N_sound.mp3
+  - assets/audio/O_sound.mp3
+  - assets/audio/P_sound.mp3
+  - assets/audio/R_sound.mp3
+  - assets/audio/S_sound.mp3
+  - assets/audio/T_sound.mp3
+  - assets/audio/U_sound.mp3
+  - assets/audio/V_sound.mp3
+  - assets/audio/W_sound.mp3
+  - assets/audio/X_sound.mp3
+  - assets/audio/Y_sound.mp3
+  - assets/audio/Z_sound.mp3
+  - assets/OO.jpg
+  - assets/IE.jpg
+  - assets/OU.jpg
+  - assets/EE-Words-.jpg
+  - assets/EA.png
+  - assets/ch.jpg
+  - assets/audio/OO_sound.mp3
+  - assets/audio/OU_sound.mp3
+  - assets/audio/EE_sound.mp3
+  - assets/audio/CH_sound.mp3
+  - assets/audio/IE_sound.mp3
+  - assets/EE_video.mp4
+  - assets/OO_video.mp4
+  - assets/CH_video.mp4
+  - assets/OO_video.mp4
+
+
+
+
+
+
 
 
 
