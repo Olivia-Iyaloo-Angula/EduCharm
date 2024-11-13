@@ -57,8 +57,8 @@ class _NavigationManagerState extends State<NavigationManager> {
 
   final List<Widget> _pages = [
     HomePage(),
-    SpellingBeeScreen(),
     GamesScreen(),
+    SpellingBeeScreen(),
     ActivitiesScreen(),
   ];
 
@@ -99,22 +99,21 @@ class _NavigationManagerState extends State<NavigationManager> {
       bottomNavigationBar: BottomNavigationBar(
         items: <BottomNavigationBarItem>[
           BottomNavigationBarItem(
-            icon: _buildNavItem(Icons.home, 'Home', _selectedIndex == 0),
+            icon: _buildNavItem(Icons.home, 'Home Sn', _selectedIndex == 0),
+            label: '',
+          ),
+          BottomNavigationBarItem(
+            icon: _buildNavItem(Icons.abc, 'Alpha AR', _selectedIndex == 1),
             label: '',
           ),
           BottomNavigationBarItem(
             icon: _buildNavItem(
-                Icons.spellcheck, 'Spelling B', _selectedIndex == 1),
+                Icons.videogame_asset, 'Spelling B', _selectedIndex == 2),
             label: '',
           ),
           BottomNavigationBarItem(
             icon: _buildNavItem(
-                Icons.videogame_asset, 'Games', _selectedIndex == 2),
-            label: '',
-          ),
-          BottomNavigationBarItem(
-            icon: _buildNavItem(
-                Icons.local_activity, 'Activities', _selectedIndex == 3),
+                Icons.videogame_asset, 'Activities', _selectedIndex == 3),
             label: '',
           ),
         ],

@@ -167,6 +167,15 @@ class _SegmentationScreenState extends State<SegmentationScreen> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
+              Text(
+                'What Do You See?',
+                style: TextStyle(
+                  fontFamily: 'PartyConfetti',
+                  fontSize: 30,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
+              ),
               // Display the image
               Container(
                 width: 200,
@@ -183,6 +192,7 @@ class _SegmentationScreenState extends State<SegmentationScreen> {
                   },
                 ),
               ),
+
               const SizedBox(height: 20),
               // Display the word with the missing letter(s) in bubble-like boxes
               Row(

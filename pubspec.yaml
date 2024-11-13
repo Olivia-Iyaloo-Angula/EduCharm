@@ -40,7 +40,10 @@ dependencies:
   flutter_tts: ^3.0.0
   animated_background: ^2.0.0
   video_player: ^2.9.1
-  
+  qr_code_scanner: ^1.0.1
+  url_launcher: ^6.3.1
+  flick_video_player: ^0.9.0
+  youtube_player_flutter: ^9.1.1
   
 
 dev_dependencies:
@@ -264,6 +267,15 @@ flutter:
   - assets/OO_video.mp4
   - assets/CH_video.mp4
   - assets/OO_video.mp4
+  - assets/images/Moon.jpg
+  - assets/images/Pout.jpg
+  - assets/images/Bee.jpg
+  - assets/images/Charlie.jpg
+  - assets/images/Pie.jpg
+  - assets/oo.gif
+  - assets/ou.gif
+  - assets/ee.gif
+  - assets/ch.gif
 
 
 

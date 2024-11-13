@@ -1,6 +1,6 @@
 import 'package:audioplayers/audioplayers.dart';
 import 'package:flutter/material.dart';
-import 'package:video_player/video_player.dart'; // Import the video_player package
+import 'package:video_player/video_player.dart';
 
 class DiagraphsScreen extends StatelessWidget {
   final AudioPlayer _audioPlayer = AudioPlayer();
@@ -117,9 +117,16 @@ class DiagraphDetailScreen extends StatelessWidget {
     'ou':
         'High up in the sky, there was a big, fluffy cloud named Pout. Pout was very proud of how white and puffy he was. Every day, he floated across the sky, making shapes for all the animals on the ground to see. "Look, it\'s a bunny!" said a fox. "No, it’s a dragon!" said a bird. Pout loved making everyone smile. But one day, he noticed that other clouds were getting bigger. Pout wasn’t jealous; instead, he puffed himself up even more and made the biggest, fluffiest cloud shape ever—a huge, happy elephant!',
     'ch':
-        'High up in the sky, there was a big, fluffy cloud named Pout. Pout was very proud of how white and puffy he was. Every day, he floated across the sky, making shapes for all the animals on the ground to see. "Look, it\'s a bunny!" said a fox. "No, it’s a dragon!" said a bird. Pout loved making everyone smile. But one day, he noticed that other clouds were getting bigger. Pout wasn’t jealous; instead, he puffed himself up even more and made the biggest, fluffiest cloud shape ever—a huge, happy elephant!',
+        'In a sunny little kitchen, there was a cheerful boy named Charlie. Charlie loved chocolate more than anything! One day, his mom gave him a big, chunky chocolate bar as a special treat. Charlie’s eyes sparkled with excitement as he held the chocolate.Just then, his pet chicken, Chicky, waddled into the kitchen. "Bawk?" Chicky clucked, eyeing the chocolate curiously. Charlie laughed and held out the chocolate for Chicky to see.Together, they sat in the cozy kitchen, sharing the fun of a sweet, chocolatey moment!',
     'ie':
         'In a cozy little kitchen, there was a pie on the windowsill, cooling off after being baked. The pie smelled so sweet, it made the whole house happy. Suddenly, a gust of wind whooshed through the window and lifted the pie into the sky! Up, up, up it went, floating above the houses and trees. A little bird named Kip saw the pie and couldn’t believe his eyes. "A pie in the sky!" Kip shouted. He followed the pie as it drifted through the clouds. Eventually, the pie landed back on the windowsill, and Kip got a tasty slice.',
+  };
+  final Map<String, String> diagraphStoryImages = {
+    'oo': 'assets/images/Moon.jpg',
+    'ee': 'assets/images/Bee.jpg',
+    'ou': 'assets/images/Pout.jpg',
+    'ch': 'assets/images/Charlie.jpg', // Add appropriate image for 'ch'
+    'ie': 'assets/images/Pie.jpg', // Add appropriate image for 'ie'
   };
 
   DiagraphDetailScreen({required this.diagraph, required this.imagePath});
@@ -142,7 +149,8 @@ class DiagraphDetailScreen extends StatelessWidget {
             _buildLetterSounds(),
             _buildStoryContainer(),
             _buildImageContainer(),
-            _buildVideoContainer(),
+            _buildGifContainer(),
+            _buildBlendingContainer()
           ],
         ),
       ),
@@ -226,6 +234,13 @@ class DiagraphDetailScreen extends StatelessWidget {
               color: Colors.black,
             ),
           ),
+          SizedBox(height: 30),
+          Image.asset(
+            diagraphStoryImages[diagraph]!,
+            fit: BoxFit.cover,
+            height: 300,
+            width: double.infinity,
+          ),
         ],
       ),
     );
@@ -275,7 +290,7 @@ class DiagraphDetailScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildVideoContainer() {
+  Widget _buildGifContainer() {
     return Container(
       margin: EdgeInsets.all(16.0),
       padding: EdgeInsets.all(16.0),
@@ -297,7 +312,43 @@ class DiagraphDetailScreen extends StatelessWidget {
           SizedBox(height: 10),
           AspectRatio(
             aspectRatio: 16 / 9,
-            child: VideoPlayerWidget(diagraph: diagraph),
+            child: Image.asset(
+              'assets/$diagraph.gif', // Path to the GIF file
+              fit: BoxFit.cover,
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildBlendingContainer() {
+    return Container(
+      margin: EdgeInsets.all(16.0),
+      padding: EdgeInsets.all(16.0),
+      decoration: BoxDecoration(
+        color: const Color.fromARGB(255, 224, 255, 249),
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            '"$diagraph" Blending:',
+            style: TextStyle(
+              fontSize: 20.0,
+              fontFamily: 'PartyConfetti',
+              fontWeight: FontWeight.bold,
+            ),
+          ),
+          SizedBox(height: 10),
+          Text(
+            'Can you think of words with this diagraph?',
+            style: TextStyle(
+              fontSize: 18.0,
+              color: Colors.black,
+              fontWeight: FontWeight.bold,
+            ),
           ),
         ],
       ),
@@ -312,73 +363,5 @@ class DiagraphDetailScreen extends StatelessWidget {
     } catch (e) {
       print('Error playing sound: $e');
     }
-  }
-}
-
-class VideoPlayerWidget extends StatefulWidget {
-  final String diagraph;
-
-  VideoPlayerWidget({required this.diagraph});
-
-  @override
-  _VideoPlayerWidgetState createState() => _VideoPlayerWidgetState();
-}
-
-class _VideoPlayerWidgetState extends State<VideoPlayerWidget> {
-  late VideoPlayerController _controller;
-
-  @override
-  void initState() {
-    super.initState();
-    _controller =
-        VideoPlayerController.asset('assets/${widget.diagraph}_video.mp4')
-          ..initialize().then((_) {
-            setState(() {});
-          });
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return _controller.value.isInitialized
-        ? Column(
-            children: [
-              AspectRatio(
-                aspectRatio: _controller.value.aspectRatio,
-                child: VideoPlayer(_controller),
-              ),
-              VideoProgressIndicator(_controller, allowScrubbing: true),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  IconButton(
-                    icon: Icon(_controller.value.isPlaying
-                        ? Icons.pause
-                        : Icons.play_arrow),
-                    onPressed: () {
-                      setState(() {
-                        _controller.value.isPlaying
-                            ? _controller.pause()
-                            : _controller.play();
-                      });
-                    },
-                  ),
-                  IconButton(
-                    icon: Icon(Icons.replay),
-                    onPressed: () {
-                      _controller.seekTo(Duration.zero);
-                      _controller.play();
-                    },
-                  ),
-                ],
-              ),
-            ],
-          )
-        : Center(child: CircularProgressIndicator());
-  }
-
-  @override
-  void dispose() {
-    _controller.dispose();
-    super.dispose();
   }
 }

@@ -1,255 +1,246 @@
 import 'package:flutter/material.dart';
+import 'package:audioplayers/audioplayers.dart'; // Import the audio player package
 
-class WordFamiliesScreen extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Word Families'),
-      ),
-      body: Column(
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Text(
-              'Word families are any group of words that have the same ending sound.',
-              style: TextStyle(
-                fontSize: 18.0,
-                color: Colors.black,
-                fontWeight: FontWeight.bold,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ),
-          Expanded(
-            child: GridView.count(
-              crossAxisCount: 2, // Number of columns
-              padding: EdgeInsets.all(16.0),
-              children: [
-                _buildWordFamilyButton(context, 'at', '-AT-'),
-                _buildWordFamilyButton(context, 'an', '-AN-'),
-                _buildWordFamilyButton(context, 'it', '-IT-'),
-                _buildWordFamilyButton(context, 'in', '-IN-'),
-                _buildWordFamilyButton(context, 'op', '-OP-'),
-                _buildWordFamilyButton(context, 'ug', '-UG-'),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _buildWordFamilyButton(
-      BuildContext context, String wordFamily, String description) {
-    return Container(
-      margin: EdgeInsets.all(10.0),
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          ElevatedButton(
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.blueAccent,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20),
-              ),
-              padding: EdgeInsets.symmetric(
-                  vertical: 44.0, horizontal: 39.0), // Increased height
-            ),
-            onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => WordsScreen(wordFamily: wordFamily),
-                ),
-              );
-            },
-            child: Text(
-              wordFamily.toUpperCase(),
-              style: TextStyle(
-                fontSize: 24.0,
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-          SizedBox(height: 12.0), // Space between button and text
-          Text(
-            description,
-            style: TextStyle(
-              fontSize: 18.0,
-              color: Colors.black,
-            ),
-            textAlign: TextAlign.center,
-          ),
-        ],
-      ),
-    );
-  }
+void main() {
+  runApp(const MaterialApp(
+    home: WordFamiliesScreen(),
+    debugShowCheckedModeBanner: false,
+  ));
 }
 
-class WordsScreen extends StatelessWidget {
-  final String wordFamily;
+class WordFamiliesScreen extends StatefulWidget {
+  const WordFamiliesScreen({super.key});
 
-  WordsScreen({required this.wordFamily});
+  @override
+  // ignore: library_private_types_in_public_api
+  _WordFamiliesScreenState createState() => _WordFamiliesScreenState();
+}
+
+class _WordFamiliesScreenState extends State<WordFamiliesScreen> {
+  // Map of word families with associated words
+  final Map<String, List<String>> wordFamilies = {
+    'at': ['cat', 'bat', 'hat'],
+    'an': ['fan', 'man', 'can'],
+  };
+
+  // To keep track of what words have been dropped in which family
+  Map<String, List<String>> selectedFamilies = {};
+
+  // Audio player instance
+  final AudioPlayer _audioPlayer = AudioPlayer();
+
+  // Function to play correct sound
+  void _playCorrectSound() async {
+    try {
+      await _audioPlayer.play(AssetSource('audio/Correct_2.mp3'));
+    } catch (e) {
+      print('Error playing correct sound: $e');
+    }
+  }
+
+  // Function to play wrong sound
+  void _playWrongSound() async {
+    try {
+      await _audioPlayer.play(AssetSource('audio/wrong.mp3'));
+    } catch (e) {
+      print('Error playing wrong sound: $e');
+    }
+  }
+
+  // Function to check if the word belongs to the correct family
+  bool _isCorrectWord(String family, String word) {
+    return wordFamilies[family]!.contains(word);
+  }
+
+  // Function to handle the word being dropped in the family
+  void _onWordDropped(String family, String word) {
+    setState(() {
+      // If the word is correct, play the correct sound and add it to the family
+      if (_isCorrectWord(family, word)) {
+        _playCorrectSound();
+        if (selectedFamilies[family] == null) {
+          selectedFamilies[family] = [];
+        }
+        selectedFamilies[family]!.add(word);
+      } else {
+        // If the word is wrong, play the wrong sound
+        _playWrongSound();
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    List<String> words = _getWordsForWordFamily(wordFamily);
-
     return Scaffold(
       appBar: AppBar(
-        title: Text('$wordFamily Words'),
+        title: Text(
+          'Word Families Fun!',
+          style: TextStyle(
+            fontFamily: 'PartyConfetti', // Use PartyConfetti font
+            fontSize: 24,
+            color: Colors.white,
+          ),
+        ),
+        backgroundColor: Colors.orangeAccent,
+        centerTitle: true,
+        elevation: 0,
       ),
-      body: ListView.builder(
-        padding: EdgeInsets.all(16.0),
-        itemCount: words.length,
-        itemBuilder: (context, index) {
-          String word = words[index];
-          return Padding(
-            padding: const EdgeInsets.symmetric(vertical: 8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: word
-                  .split('')
-                  .map(
-                    (letter) => Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 4.0),
-                      child: ElevatedButton(
-                        style: ElevatedButton.styleFrom(
-                          backgroundColor:
-                              const Color.fromARGB(255, 147, 149, 149),
-                          padding: EdgeInsets.all(
-                              14.0), // Reduced padding for buttons
-                          shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10),
-                          ),
-                          minimumSize:
-                              Size(50, 50), // Set a fixed size for buttons
+      body: SingleChildScrollView(
+        // Make the screen scrollable
+        child: Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Word Families Drag Targets (Wrapped to 2 per row for a cleaner look)
+              Wrap(
+                spacing: 20,
+                runSpacing: 20,
+                alignment: WrapAlignment.center,
+                children: wordFamilies.keys.map((family) {
+                  return DragTarget<String>(
+                    onAccept: (word) {
+                      _onWordDropped(family, word);
+                    },
+                    builder: (context, candidateData, rejectedData) {
+                      return Container(
+                        width: 120,
+                        height: 120,
+                        decoration: BoxDecoration(
+                          color: Colors.pinkAccent,
+                          borderRadius: BorderRadius.circular(15),
                         ),
-                        onPressed: () {
-                          // Add your onPressed code here
-                        },
+                        child: Center(
+                          child: Text(
+                            family.toUpperCase(),
+                            style: TextStyle(
+                              fontFamily:
+                                  'PartyConfetti', // Use PartyConfetti font
+                              fontSize: 22,
+                              color: Colors.white,
+                              fontWeight: FontWeight.bold,
+                            ),
+                          ),
+                        ),
+                      );
+                    },
+                  );
+                }).toList(),
+              ),
+              SizedBox(height: 30),
+
+              // Draggable Words
+              GridView.builder(
+                shrinkWrap:
+                    true, // Ensures the GridView doesn't take up more space than needed
+                physics:
+                    NeverScrollableScrollPhysics(), // Disable GridView scrolling
+                gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 3,
+                  childAspectRatio: 1.5,
+                  crossAxisSpacing: 15,
+                  mainAxisSpacing: 15,
+                ),
+                itemCount: wordFamilies.values.expand((x) => x).length,
+                itemBuilder: (context, index) {
+                  String word =
+                      wordFamilies.values.expand((x) => x).toList()[index];
+                  return Draggable<String>(
+                    data: word,
+                    childWhenDragging: Container(
+                      width: 100,
+                      height: 100,
+                      decoration: BoxDecoration(
+                        color: Colors.grey,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                    feedback: Material(
+                      color: Colors.transparent,
+                      child: Container(
+                        width: 100,
+                        height: 100,
+                        decoration: BoxDecoration(
+                          color: Colors.orangeAccent,
+                          borderRadius: BorderRadius.circular(10),
+                        ),
+                        child: Center(
+                          child: Text(
+                            word,
+                            style: TextStyle(
+                                fontFamily:
+                                    'PartyConfetti', // Use PartyConfetti font
+                                color: Colors.white,
+                                fontSize: 18),
+                          ),
+                        ),
+                      ),
+                    ),
+                    child: Container(
+                      width: 100,
+                      height: 100,
+                      decoration: BoxDecoration(
+                        color: Colors.orange,
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Center(
                         child: Text(
-                          letter.toUpperCase(),
+                          word,
                           style: TextStyle(
-                            fontSize: 24.0, // Kept font size
+                            fontFamily:
+                                'PartyConfetti', // Use PartyConfetti font
                             color: Colors.white,
+                            fontSize: 18,
                             fontWeight: FontWeight.bold,
                           ),
                         ),
                       ),
                     ),
-                  )
-                  .toList(),
-            ),
-          );
-        },
+                  );
+                },
+              ),
+
+              // Display selected words per family
+              Padding(
+                padding: const EdgeInsets.all(8.0),
+                child: Column(
+                  children: selectedFamilies.keys.map((family) {
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          '$family Family:',
+                          style: TextStyle(
+                            fontFamily:
+                                'PartyConfetti', // Use PartyConfetti font
+                            fontSize: 20,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.pinkAccent,
+                          ),
+                        ),
+                        ...selectedFamilies[family]!.map((word) {
+                          return Padding(
+                            padding: const EdgeInsets.symmetric(vertical: 4.0),
+                            child: Text(
+                              word,
+                              style: TextStyle(
+                                fontFamily:
+                                    'PartyConfetti', // Use PartyConfetti font
+                                fontSize: 18,
+                                color: Colors.black,
+                              ),
+                            ),
+                          );
+                        }).toList(),
+                      ],
+                    );
+                  }).toList(),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
-
-  List<String> _getWordsForWordFamily(String wordFamily) {
-    // Define some example words for each word family
-    switch (wordFamily) {
-      case 'at':
-        return [
-          'cat',
-          'bat',
-          'hat',
-          'rat',
-          'sat',
-          'mat',
-          'pat',
-          'fat',
-          'flat',
-          'that'
-        ];
-      case 'an':
-        return [
-          'fan',
-          'man',
-          'can',
-          'pan',
-          'tan',
-          'van',
-          'plan',
-          'span',
-          'scan',
-          'ran'
-        ];
-      case 'it':
-        return [
-          'kit',
-          'lit',
-          'pit',
-          'sit',
-          'fit',
-          'hit',
-          'wit',
-          'bit',
-          'quit',
-          'split'
-        ];
-      case 'in':
-        return [
-          'pin',
-          'win',
-          'bin',
-          'sin',
-          'fin',
-          'kin',
-          'spin',
-          'grin',
-          'thin',
-          'skin'
-        ];
-      case 'op':
-        return [
-          'top',
-          'pop',
-          'hop',
-          'mop',
-          'cop',
-          'shop',
-          'chop',
-          'drop',
-          'flop',
-          'stop'
-        ];
-      case 'ug':
-        return [
-          'bug',
-          'hug',
-          'rug',
-          'mug',
-          'jug',
-          'tug',
-          'dug',
-          'lug',
-          'plug',
-          'slug'
-        ];
-      default:
-        return [
-          'cat',
-          'bat',
-          'hat',
-          'rat',
-          'sat',
-          'mat',
-          'pat',
-          'fat',
-          'flat',
-          'that'
-        ];
-    }
-  }
-}
-
-void main() {
-  runApp(MaterialApp(
-    home: WordFamiliesScreen(),
-    debugShowCheckedModeBanner: false,
-  ));
 }

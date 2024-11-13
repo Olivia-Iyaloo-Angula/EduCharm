@@ -55,7 +55,7 @@ class VowelsScreen extends StatelessWidget {
         child: Image.asset(
           'assets/vowels/$vowel.jpg', // Path to the vowel image
           fit: BoxFit.cover, // Ensure the image covers the button
-          height: 140, // Increased height to make the image bigger
+          height: 136, // Increased height to make the image bigger
         ),
       ),
     );
